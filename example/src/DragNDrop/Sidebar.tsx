@@ -15,6 +15,9 @@ const Sidebar = () => {
       <div className="react-flow__node-default" onDragStart={(event: DragEvent) => onDragStart(event, 'default')} draggable>
         Default Node
       </div>
+      <div className="react-flow__node-output" onDragStart={(event: DragEvent) => onDragStart(event, 'selectorNode')} draggable>
+        Color Node
+      </div>
       <div className="react-flow__node-output" onDragStart={(event: DragEvent) => onDragStart(event, 'output')} draggable>
         Output Node
       </div>
