@@ -7,7 +7,7 @@ const onConnect = (params: Connection | Edge) => console.log('handle onConnect',
 const FunctionNode: FC<NodeProps> = ({ data, selected }) => {
 return (
     <Node
-    label={data.name?data.name:"Some Function"}
+    label={data.label?data.label:"Some Function"}
     selected={selected}
     color={"Lavender"}
     content={

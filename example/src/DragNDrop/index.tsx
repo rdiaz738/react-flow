@@ -20,7 +20,7 @@ import { select } from 'd3-selection';
 import NodeDetails from './NodeDetails';
 const initialElements = [{ id: '1', type: 'input', data: { label: 'input node' }, position: { x: 250, y: 5 } }];
 const nodeTypes = {
-  selectorNode: FunctionNode,
+  Function: FunctionNode,
 };
 
 const onDragOver = (event: DragEvent) => {
