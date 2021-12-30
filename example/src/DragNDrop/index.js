@@ -9,19 +9,24 @@ import ReactFlow, {
 import Sidebar from './Sidebar';
 
 import './dnd.css';
-import InputNode from './CustomNodes/InputNode';
+import ActionNode from './CustomNodes/ActionNode';
 import OutputNode from './CustomNodes/OutputNode';
 import FlowContext from './FlowContext';
 
 
 const nodeTypes = {
-  Input_Node: InputNode,
+  actionNode: ActionNode,
   Output_Node: OutputNode
 };
 
 
-let id = 0;
-const getId = () => `${id++}`;
+const onDragOver = (event) => {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+};
+
+let id = 1;
+const getId = () => `node_${id++}`;
 
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
@@ -31,7 +36,16 @@ const DnDFlow = () => {
   const [elements, setElements] = useState([]);
 
   
-  const onConnect = (params) => setElements((els) => addEdge(params, els));
+  const onConnect = (params) => {
+    const sourceHandleUsed = elements.find(
+      (elem) => elem.sourceHandle === params.sourceHandle
+    );
+
+    if (!sourceHandleUsed /* && !targetHandleUsed*/) {
+      setElements((els) => addEdge(params, els));
+    }
+  };
+
   const onElementsRemove = (elementsToRemove) =>
     setElements((els) => removeElements(elementsToRemove, els));
 
@@ -43,38 +57,33 @@ const DnDFlow = () => {
     event.dataTransfer.dropEffect = 'move';
   };
 
-  const onChange = (event, data, field) =>{
-    console.log(event.target.value, data, field)
-    console.log(elements)
-  }
-
   const onDrop = (event) => {
     event.preventDefault();
-
-    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-    const type = event.dataTransfer.getData('application/reactflow');
-    const position = reactFlowInstance.project({
-      x: event.clientX - reactFlowBounds.left,
-      y: event.clientY - reactFlowBounds.top,
-    });
-    const newNodeId = getId();
-    const newNode = {
-      id: newNodeId,
-      type,
-      position,
-      data: {
-        id:newNodeId,
+    if (reactFlowInstance) {
+      const node = JSON.parse(
+        event.dataTransfer.getData("application/reactflow")
+      );
+      const { type, name } = node;
+      const position = reactFlowInstance.project({
+        x: event.clientX,
+        y: event.clientY - 40
+      });
+      const newNodeId = getId();
+      const newNode = {
+        id: newNodeId,
         type,
-        onChange:onChange,
-        label: `${type}` },
-    };
+        name,
+        position,
+        data: {
+          internal: { onDelete: onElementsRemove, name: `${name}` },
+          action_type: name.replace(/\s+/g, "_").toLowerCase()
+        }
+      };
 
-    setElements((es) => es.concat(newNode));
+      setElements((es) => es.concat(newNode));
+    }
   };
-  useEffect(() => {
-    setElements(elements);
-  }, [elements, setElements]);
-  console.log(elements)
+console.log(elements)
     return (
     <div className="dndflow">
       <ReactFlowProvider>
