@@ -9,21 +9,16 @@ import ReactFlow, {
 import Sidebar from './Sidebar';
 
 import './dnd.css';
-import ActionNode from './CustomNodes/ActionNode';
+import InputNode from './CustomNodes/InputNode';
 import OutputNode from './CustomNodes/OutputNode';
 import FlowContext from './FlowContext';
 
 
 const nodeTypes = {
-  actionNode: ActionNode,
-  Output_Node: OutputNode
+  inputNode: InputNode,
+  outputNode: OutputNode
 };
 
-
-const onDragOver = (event) => {
-  event.preventDefault();
-  event.dataTransfer.dropEffect = "move";
-};
 
 let id = 1;
 const getId = () => `node_${id++}`;
